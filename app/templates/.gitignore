@@ -1,0 +1,10 @@
+*.py[cod]
+
+.DS_Store
+.sass-cache
+node_modules
+components
+build
+dist
+
+npm-debug.log

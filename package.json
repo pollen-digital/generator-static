@@ -1,0 +1,28 @@
+{
+  "name": "generator-static",
+  "version": "0.0.1",
+  "description": "Yeoman Generator for a very basic static website",
+  "main": "app/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/pollen-digital/generator-static.git"
+  },
+  "keywords": [
+    "yeoman-generator"
+  ],
+  "author": {
+    "name": "George Haidar",
+    "email": "george@pollen.com.au"
+  },
+  "engines": {
+    "node": ">=0.8.0"
+  },
+  "license": [
+    {
+      "type": "MIT"
+    }
+  ],
+  "dependencies": {
+    "yeoman-generator": "~0.10.2"
+  }
+}
