@@ -72,12 +72,15 @@ module.exports = (grunt) ->
     copy:
       js:
         files: [
+          # copy any js files inside the scripts folder
           {
             expand: true
             cwd: '<%= paths.scripts %>'
             src: '**/*.js'
             dest: '<%= paths.temp + paths.scripts %>'
           }
+          # respond.js needs to be included separately so we copy it into
+          # output folder
           {
             '<%= paths.dist + paths.scripts %>respond.min.js':
               '<%= paths.components %>respond/respond.min.js'
@@ -112,6 +115,7 @@ module.exports = (grunt) ->
           '<%= paths.dist + paths.stylesheets %>style.min.css':
             '<%= paths.dist + paths.stylesheets %>style.css'
 
+    # generates the js application bundle both minified and unminified versions
     uglify:
       build:
         options:
@@ -121,6 +125,11 @@ module.exports = (grunt) ->
         files:
           '<%= paths.dist + paths.scripts %>bundle.js': [
             '<%= paths.components %>jquery/jquery.js'
+            # CHECKPOINT: [js] list the modules you want to include into the
+            # js application bundle here. This includes third party modules,
+            # compiled coffee files and any other js modules you manually
+            # included in the project tree
+            # NOTE: ordering matters
           ]
       dist:
         options:

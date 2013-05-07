@@ -29,7 +29,8 @@ In a terminal, run:
 
 	npm install -g bower grunt-cli yo generator-static http-server
 
-- `bower` and `grunt-cli` are explained below.
+- `bower` installs and manages many client-side dependencies (e.g. jQuery)
+- `grunt-cli` used to execute grunt tasks defined in the project
 - `yo` and `generator-static` will install yeoman and this generator
 - `http-server` is used for serving the site in development
 
@@ -73,20 +74,14 @@ A good way to debug the code as you develop the site is as follows:
 - navigate into `<PROJECT_ROOT>/dist/` and run `http-server -c-1`
 - you should now have a live development server running at `http://localhost:8080` which serves up the site
 
-
-## Background
-### Batteries Included:
-- Grunt: Task runner (similar to make, ant)
-- Bower: Front-end package management (similar to pip, gem)
+## More info
 
 ### Project Structure
 	app/
 	.... assets/
 	.... .... images/
-	.... .... less/
-	.... .... css/
-	.... .... js/
-	.... .... coffee/
+	.... .... styles/
+	.... .... scripts/
 	.... views/ <- contains jade templates for site pages
 	.bowerrc <- bower cli configuration
 	.editorconfig <- editor configuration rules (indent style, line endings, etc...)
@@ -95,3 +90,126 @@ A good way to debug the code as you develop the site is as follows:
 	defaults.json <- default configuration for grunt tasks
 	Gruntfile.coffee  <- grunt tasks definition module
 	package.json  <- npm package definition
+
+### Project settings
+
+The project's default settings are found in `defaults.json`. If you wish to
+override any values, create a file called `locals.json` and define the new
+values for the desired keys.
+
+If you want to add new settings to use in your project, ensure you have defined
+default values for them in `defaults.json` and you can then override them in
+`locals.json` if necessary.
+
+Jade templates have access to settings using the `settings` context variable.
+
+### Use cases
+
+#### Adding a client-side dependency
+
+Let us assume you want to use lodash on your site.
+
+1. In the project's root directory where `bower.json` is located,
+run `bower install --save lodash`
+1. Open `Gruntfile.coffee` and look for the comment starting with
+`# CHECKPOINT: [js]`
+
+1. Add `lodash.js`\* to the list of modules to include in JS application bundle.
+You should now have something similar to the following lines:
+
+		files:
+		  '<%= paths.dist + paths.scripts %>bundle.js': [
+		    '<%= paths.components %>jquery/jquery.js'
+		    # CHECKPOINT: [js] list the modules you want to include into the
+		    # js application bundle here. This includes third party modules,
+		    # compiled coffee files and any other js modules you manually
+		    # included in the project tree
+		    # NOTE: ordering matters
+		    '<%= paths.components %>lodash/lodash.js'
+		    '<%= paths.temp + paths.scripts %>my-module.js'
+		  ]
+
+1. (Optional) If you are running `grunt watch` in terminal, kill it
+1. Run `grunt` (or `grunt default watch` if you want to watch for changes)
+
+_\*Note: Use unminified version of modules whenever possible_
+
+#### Working with styles
+
+In `Gruntfile.coffee`, you will find that the `less` task only compiles
+`app/assets/styles/style.less`. This means that you should `style.less` to
+define the style for the entire site. A typical `style.less` may contain
+something similar to the following:
+
+	@import 'bootstrap/less/variables';
+	@import 'variables';
+
+	@import 'bootstrap/less/mixins';
+	@import 'bootstrap/less/reset';
+	@import 'bootstrap/less/scaffolding';
+	@import 'bootstrap/less/grid';
+	@import 'bootstrap/less/layouts';
+	@import 'bootstrap/less/type';
+	@import 'bootstrap/less/tables';
+	@import 'bootstrap/less/sprites';
+	@import 'bootstrap/less/buttons';
+	@import 'bootstrap/less/component-animations';
+	@import 'bootstrap/less/responsive-utilities';
+	@import 'bootstrap/less/utilities';
+
+	@import 'icons';
+	@import 'buttons';
+	@import 'type';
+	@import 'structure';
+	@import 'theme';
+
+#### Referencing assets
+
+There are two places where you might want to reference assets (css/js/img):
+in Jade templates or LESS/CSS stylesheets.
+
+##### Jade templates
+
+When writing templates you have access to a function called
+`asset(path, environmentSuffix)`. So, for example, to include javascript asset
+in a template (let's call it _base.jade for this example), you would write the
+following:
+
+	// somewhere in _base.jade
+	// ...
+	block scripts
+	  script(type='text/javascript', src=asset('scripts/bundle.js', '.min'))
+	// ...
+
+The second argument in the `asset` functions indicates that this asset is
+environment-sensitive. That is: if we are running grunt in development
+(e.g. `NODE_ENV=development`), then use the unminified version otherwise use
+minified version. So for example given the lines above:
+
+With `NODE_ENV=development`, they would compile to:
+
+	<script type="text/javascript" src="/assets/scripts/bundle.js?rel=5826269c"></script>
+
+With `NODE_ENV=production`, they would compile to:
+
+	<script type="text/javascript" src="/assets/scripts/bundle.min.js?rel=af26cd84"></script>
+
+##### LESS/CSS stylesheets
+
+In stylesheets, you simply reference assets using `$ASSET(<asset_path>)`.
+For example:
+
+	.mast {
+	  background: url($ASSET(images/texture.png)) repeat;
+	}
+
+There is a grunt task called `replace` that will look through the compiled
+LESS/CSS and replace any instances of the `$ASSET()` string with the resolved
+path of asset
+
+##### Furthermore
+
+The asset helper being used here uses the cache busting technique of appending
+the first 8 digits of the md5 checksum for a given asset as a request parameter.
+This can be turned off by setting `"ASSET_CACHE_BUSTING": false`
+in your local settings file (`locals.json`).
