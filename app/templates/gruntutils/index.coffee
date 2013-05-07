@@ -20,7 +20,7 @@ exports.AssetManager = class AssetManager
     contents = fs.readFileSync filePath
     md5.update(contents).digest 'hex'
 
-  helper: ->
+  makeHelper: ->
     func = (assetPath, envSuffix = '') ->
       fixedPath = @injectPath assetPath, envSuffix
       filePath = path.join @assetRoot, fixedPath
@@ -31,7 +31,7 @@ exports.AssetManager = class AssetManager
       @cache[filePath]
     func.bind @
 
-extend = (args...) ->
+exports.extend = (args...) ->
   dest = args[0]
   return dest if not dest?
   args[1..].forEach (item) ->
