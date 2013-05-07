@@ -17,7 +17,8 @@ This guides assumes you have installed the following tools successfully:
 - git
 - Homebrew
 
-Use nave (or similar) to manage you Node.js installations. You should always try to use the latest stable version of Node.js.
+Use nave (or similar) to manage you Node.js installations. You should always try
+to use the latest stable version of Node.js.
 
 In a terminal, run:
 
@@ -42,13 +43,14 @@ Now, to create a new static site project, run the following command:
 
 Replace `my_project` with your own project name.
 
-yeoman will handle installing the various dependencies initially (using npm and bower).
+yeoman will handle installing the various dependencies initially (using npm and
+bower).
 
 ### 4. Write code!
 
-- all stylesheets (css/less/scss/etc...) go in `app/assets/styles/`
-- all scripts (js and coffee) go in `app/assets/scripts/`
-- all html (or jade) go in `app/views/`
+- all stylesheets (css/less/scss) go in `<PROJECT_ROOT>/app/assets/styles/`
+- all scripts (js and coffee) go in `<PROJECT_ROOT>/app/assets/scripts/`
+- all html (or jade) go in `<PROJECT_ROOT>/app/views/`
 
 ### 5. Build/Debug
 
@@ -56,7 +58,8 @@ Grunt is used as the task runner. To build the your code run:
 
 	grunt
 
-If you are in a staging or production evironment you should set `NODE_ENV` so the code is optimised. For example:
+If you are in a staging or production evironment you should set `NODE_ENV` so
+the code is optimised. For example:
 
 	NODE_ENV=production grunt
 
@@ -72,24 +75,26 @@ A good way to debug the code as you develop the site is as follows:
 - navigate into your project's root directory and run `grunt && grunt watch`
 - open a second terminal window and (again) use `nave` to select your Node.js installation
 - navigate into `<PROJECT_ROOT>/dist/` and run `http-server -c-1`
-- you should now have a live development server running at `http://localhost:8080` which serves up the site
+- you should now have a live development server running at
+`http://localhost:8080` which serves up the site
 
 ## More info
 
 ### Project Structure
-	app/
-	.... assets/
-	.... .... images/
-	.... .... styles/
-	.... .... scripts/
-	.... views/ <- contains jade templates for site pages
-	.bowerrc <- bower cli configuration
-	.editorconfig <- editor configuration rules (indent style, line endings, etc...)
-	.gitignore <- contains sensible defaults for files/folders to ignore
-	bower.json  <- bower package definition packages
-	defaults.json <- default configuration for grunt tasks
-	Gruntfile.coffee  <- grunt tasks definition module
-	package.json  <- npm package definition
+	<PROJECT_ROOT>/
+		app/
+		.... assets/
+		.... .... images/
+		.... .... styles/
+		.... .... scripts/
+		.... views/ <- contains jade templates for site pages
+		.bowerrc <- bower cli configuration
+		.editorconfig <- editor configuration rules (indent style, line endings)
+		.gitignore <- contains sensible defaults for files/folders to ignore
+		bower.json  <- bower package definition packages
+		defaults.json <- default configuration for grunt tasks
+		Gruntfile.coffee  <- grunt tasks definition module
+		package.json  <- npm package definition
 
 ### Project settings
 
@@ -102,6 +107,15 @@ default values for them in `defaults.json` and you can then override them in
 `locals.json` if necessary.
 
 Jade templates have access to settings using the `settings` context variable.
+
+### A note about Jade templates
+
+This project relies on Jade templates to compose the site's pages. Templates
+are placed in the `<PROJECT_ROOT>/app/views/` folder.
+
+Any template whose name begins with `_` (underscore) is considered a 'partial'
+and is not compiled into the output directory (`<PROJECT_ROOT>/dist/views/` by
+default). These can be included and extended by other templates and partial.
 
 ### Use cases
 
@@ -137,9 +151,8 @@ _\*Note: Use unminified version of modules whenever possible_
 #### Working with styles
 
 In `Gruntfile.coffee`, you will find that the `less` task only compiles
-`app/assets/styles/style.less`. This means that you should `style.less` to
-define the style for the entire site. A typical `style.less` may contain
-something similar to the following:
+`<PROJECT_ROOT>/app/assets/styles/style.less`. This means that you should
+`style.less` to define the style for the entire site. A typical `style.less` may contain something similar to the following:
 
 	@import 'bootstrap/less/variables';
 	@import 'variables';
@@ -207,9 +220,11 @@ There is a grunt task called `replace` that will look through the compiled
 LESS/CSS and replace any instances of the `$ASSET()` string with the resolved
 path of asset
 
-##### Furthermore
+##### Notes
 
-The asset helper being used here uses the cache busting technique of appending
-the first 8 digits of the md5 checksum for a given asset as a request parameter.
-This can be turned off by setting `"ASSET_CACHE_BUSTING": false`
+1. The asset helper being used here uses the cache busting technique of
+appending the first 8 digits of the md5 checksum for a given asset as a request parameter. This can be turned off by setting `"ASSET_CACHE_BUSTING": false`
 in your local settings file (`locals.json`).
+1. Asset paths passed to the asset helper for both Jade templates and
+stylesheets are relative to the `ASSET_ROOT` which is `app/assets/` by default
+(see `defaults.json`).
