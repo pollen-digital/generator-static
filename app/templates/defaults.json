@@ -1,5 +1,5 @@
 {
   "ASSET_URL": "/assets/",
-  "ASSET_ROOT": "assets/",
+  "ASSET_ROOT": "app/assets/",
   "ASSET_CACHE_BUSTING": true
 }
