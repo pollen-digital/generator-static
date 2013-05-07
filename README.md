@@ -4,9 +4,13 @@ A client-side project workflow template.
 
 ## Instructions
 ### 1. Install Node.js
+
+Skip this section if you have a node evironment setup.
+
 #### OS X
 
 ##### Prerequisites
+
 This guides assumes you have installed the following tools successfully:
 - Xcode
 - Xcode developer tools
@@ -21,23 +25,15 @@ In a terminal, run:
 	npm install -g nave
 	nave use stable
 
-### 2. Install http-server
+### 2. Install development tools
 
-`http-server` is used to serve the static site under development. Install it using:
+	npm install -g bower grunt-cli yo generator-static http-server
 
-	npm install -g http-server
+- `bower` and `grunt-cli` are explained below.
+- `yo` and `generator-static` will install yeoman and this generator
+- `http-server` is used for serving the site in development
 
-### 3. Install yeoman
-
-After that install `yeoman`:
-
-	npm install -g yo
-
-Now install this package:
-
-	npm install -g generator-static
-
-### 4. Create a project
+### 3. Create a project
 
 Now, to create a new static site project, run the following command:
 
@@ -47,13 +43,13 @@ Replace `my_project` with your own project name.
 
 yeoman will handle installing the various dependencies initially (using npm and bower).
 
-### 5. Write code!
+### 4. Write code!
 
 - all stylesheets (css/less/scss/etc...) go in `app/assets/styles/`
 - all scripts (js and coffee) go in `app/assets/scripts/`
 - all html (or jade) go in `app/views/`
 
-### 6. Build/Debug
+### 5. Build/Debug
 
 Grunt is used as the task runner. To build the your code run:
 
@@ -92,9 +88,10 @@ A good way to debug the code as you develop the site is as follows:
 	.... .... js/
 	.... .... coffee/
 	.... views/ <- contains jade templates for site pages
-	.bowerrc <- bower command configuration
+	.bowerrc <- bower cli configuration
 	.editorconfig <- editor configuration rules (indent style, line endings, etc...)
 	.gitignore <- contains sensible defaults for files/folders to ignore
 	bower.json  <- bower package definition packages
+	defaults.json <- default configuration for grunt tasks
 	Gruntfile.coffee  <- grunt tasks definition module
 	package.json  <- npm package definition
