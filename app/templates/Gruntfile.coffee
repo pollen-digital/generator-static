@@ -23,6 +23,7 @@ module.exports = (grunt) ->
     scripts: '<%= paths.assets %>scripts/'
     stylesheets: '<%= paths.assets %>styles/'
     images: '<%= paths.assets %>images/'
+    fonts: '<%= paths.assets %>fonts/'
 
   assetHelper = new AssetManager(
     paths.dist + settings.ASSET_ROOT
@@ -98,10 +99,19 @@ module.exports = (grunt) ->
       images:
         files: [
           {
-          expand: true
-          cwd: '<%= paths.images %>'
-          src: '*.{gif,ico}'
-          dest: '<%= paths.dist + paths.images %>'
+            expand: true
+            cwd: '<%= paths.images %>'
+            src: '*.{gif,ico}'
+            dest: '<%= paths.dist + paths.images %>'
+          }
+        ]
+      fonts:
+        files: [
+          {
+            expand: true
+            cwd: '<%= paths.fonts %>'
+            src: '*'
+            dest: '<%= paths.dist + paths.fonts %>'
           }
         ]
       dist:
@@ -204,5 +214,6 @@ module.exports = (grunt) ->
   grunt.registerTask 'scripts', ['coffee', 'copy:js', 'uglify:build',
     'uglify:dist']
   grunt.registerTask 'images', ['imagemin', 'copy:images']
-  grunt.registerTask 'default', ['images', 'stylesheets', 'scripts', 'jade']
+  grunt.registerTask 'default', ['images', 'copy:fonts', 'stylesheets',
+    'scripts', 'jade']
 
