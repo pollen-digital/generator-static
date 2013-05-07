@@ -1,27 +1,40 @@
 ### global module:false ###
 fs = require 'fs'
+gruntutils = require './gruntutils'
+AssetManager = gruntutils.AssetManager
+extend = gruntutils.extend
 
 module.exports = (grunt) ->
-  defaults = grunt.file.readJSON('defaults.json')
-  locals = if fs.existsSync './locals.json' then grunt.file.readJSON('locals.json') else {}
+  bowerConf = grunt.file.readJSON '.bowerrc'
+  defaults = grunt.file.readJSON 'defaults.json'
+  locals = {}
+  if fs.existsSync './locals.json'
+    locals = grunt.file.readJSON 'locals.json'
   settings = extend {}, defaults, locals
+
   ENV = process.env['NODE_ENV'] or settings['ENV'] or 'development'
 
   paths =
     temp: 'temp/'
     dist: 'dist/'
-    views: 'views/'
     assets: settings.ASSET_ROOT
-    components: '<%= paths.assets %>components/'
+    views: 'app/views/'
+    components: bowerConf.directory
     scripts: '<%= paths.assets %>scripts/'
-    stylesheets: '<%= paths.assets %>stylesheets/'
+    stylesheets: '<%= paths.assets %>styles/'
     images: '<%= paths.assets %>images/'
 
-  assetHelper = asset paths.dist + settings.ASSET_ROOT,
-    settings.ASSET_URL, settings.ASSET_CACHE_BUSTING, ENV
+  assetHelper = new AssetManager(
+    paths.dist + settings.ASSET_ROOT
+    settings.ASSET_URL
+    settings.ASSET_CACHE_BUSTING
+    ENV
+  ).makeHelper()
 
   grunt.initConfig
     paths: paths
+
+    # optimise png and jpeg files
     imagemin:
       dist:
         options:
@@ -31,7 +44,7 @@ module.exports = (grunt) ->
             expand: true
             cwd: '<%= paths.images %>'
             src: '**/*.{png,jpg,jpeg}'
-            dest: '<%= paths.dist %><%= paths.images %>'
+            dest: '<%= paths.dist + paths.images %>'
           }
         ]
 
@@ -42,7 +55,7 @@ module.exports = (grunt) ->
             expand: true
             cwd: '<%= paths.scripts %>'
             src: '**/*.coffee'
-            dest: '<%= paths.temp %><%= paths.scripts %>'
+            dest: '<%= paths.temp + paths.scripts %>'
             rename: (dest, src) ->
               dest + src.split('.').slice(0,-1).join('.') + '.js'
           }
@@ -53,7 +66,7 @@ module.exports = (grunt) ->
         options:
           paths: ['<%= paths.components %>', '<%= paths.stylesheets %>']
         files:
-          '<%= paths.temp %><%= paths.stylesheets %>style.css':
+          '<%= paths.temp + paths.stylesheets %>style.css':
             '<%= paths.stylesheets %>style.less'
 
     copy:
@@ -63,10 +76,10 @@ module.exports = (grunt) ->
             expand: true
             cwd: '<%= paths.scripts %>'
             src: '**/*.js'
-            dest: '<%= paths.temp %><%= paths.scripts %>'
+            dest: '<%= paths.temp + paths.scripts %>'
           }
           {
-            '<%= paths.dist %><%= paths.scripts %>respond.min.js':
+            '<%= paths.dist + paths.scripts %>respond.min.js':
               '<%= paths.components %>respond/respond.min.js'
           }
         ]
@@ -76,34 +89,28 @@ module.exports = (grunt) ->
             expand: true
             cwd: '<%= paths.stylesheets %>'
             src: '**/*.css'
-            dest: '<%= paths.temp %><%= paths.stylesheets %>'
+            dest: '<%= paths.temp + paths.stylesheets %>'
           }
         ]
       images:
         files: [
           {
-            expand: true
-            cwd: '<%= paths.components %>bootstrap/img'
-            src: '*.png'
-            dest: '<%= paths.dist%><%= paths.images %>'
-          }
-          {
           expand: true
           cwd: '<%= paths.images %>'
           src: '*.{gif,ico}'
-          dest: '<%= paths.dist%><%= paths.images %>'
+          dest: '<%= paths.dist + paths.images %>'
           }
         ]
       dist:
         files:
-          '<%= paths.dist %><%= paths.stylesheets %>style.css':
-            '<%= paths.temp %><%= paths.stylesheets %>style.css'
+          '<%= paths.dist + paths.stylesheets %>style.css':
+            '<%= paths.temp + paths.stylesheets %>style.css'
 
     cssmin:
       dist:
         files:
-          '<%= paths.dist %><%= paths.stylesheets %>style.min.css':
-            '<%= paths.dist %><%= paths.stylesheets %>style.css'
+          '<%= paths.dist + paths.stylesheets %>style.min.css':
+            '<%= paths.dist + paths.stylesheets %>style.css'
 
     uglify:
       build:
@@ -112,19 +119,15 @@ module.exports = (grunt) ->
           compress: false
           beautify: true
         files:
-          '<%= paths.dist %><%= paths.scripts %>bundle.js': [
+          '<%= paths.dist + paths.scripts %>bundle.js': [
             '<%= paths.components %>jquery/jquery.js'
-            '<%= paths.components %>FitText.js/jquery.fittext.js'
-            '<%= paths.temp %><%= paths.scripts %>utils.js'
-            '<%= paths.temp %><%= paths.scripts %>video.js'
-            '<%= paths.temp %><%= paths.scripts %>tracking.js'
-            '<%= paths.temp %><%= paths.scripts %>app.js'
           ]
       dist:
         options:
           preserveComments: 'some'
         files:
-          '<%= paths.dist %><%= paths.scripts %>bundle.min.js': '<%= paths.dist %><%= paths.scripts %>bundle.js'
+          '<%= paths.dist + paths.scripts %>bundle.min.js':
+            '<%= paths.dist + paths.scripts %>bundle.js'
 
     jade:
       dist:
@@ -139,14 +142,21 @@ module.exports = (grunt) ->
             expand: true
             cwd: '<%= paths.views %>'
             src: ['**/*.jade', '!**/_*.jade']
-            dest: '<%= paths.dist %><%= paths.views %>'
+            dest: '<%= paths.dist + paths.views %>'
             ext: '.html'
           }
         ]
 
+    # finds all instances of the string $ASSET(some_asset_path) in the
+    # concatenated and resolves the path of the asset.
+    # It relies on the assetHelper for this.
+    # Example (assuming asset url is '/assets/'):
+    # .bg { background: url($ASSET(images/background.png)); }
+    # gets replaced with
+    # .bg { background: url(/assets/images/background.png?rel=a27bce2); }
     replace:
       css:
-        src: '<%= paths.dist %><%= paths.stylesheets %>style.css'
+        src: '<%= paths.dist + paths.stylesheets %>style.css'
         overwrite: true
         replacements: [
           {
@@ -180,8 +190,10 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks 'grunt-contrib-uglify'
   grunt.loadNpmTasks 'grunt-contrib-watch'
   grunt.loadNpmTasks 'grunt-text-replace'
-  grunt.registerTask 'stylesheets', ['less', 'copy:css', 'copy:dist', 'replace:css', 'cssmin']
-  grunt.registerTask 'scripts', ['coffee', 'copy:js', 'uglify:build', 'uglify:dist']
+  grunt.registerTask 'stylesheets', ['less', 'copy:css', 'copy:dist',
+    'replace:css', 'cssmin']
+  grunt.registerTask 'scripts', ['coffee', 'copy:js', 'uglify:build',
+    'uglify:dist']
   grunt.registerTask 'images', ['imagemin', 'copy:images']
   grunt.registerTask 'default', ['images', 'stylesheets', 'scripts', 'jade']
 
