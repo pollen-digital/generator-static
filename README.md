@@ -39,7 +39,8 @@ In a terminal, run:
 
 Now, to create a new static site project, run the following command:
 
-	yo static:app my_project
+	mkdir my_project && cd my_project
+	yo static:app
 
 Replace `my_project` with your own project name.
 
