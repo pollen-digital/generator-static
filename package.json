@@ -1,7 +1,7 @@
 {
   "name": "generator-static",
   "version": "0.0.1",
-  "description": "Yeoman Generator for a basic static website",
+  "description": "Yeoman Generator for a very basic static website",
   "main": "app/index.js",
   "repository": {
     "type": "git",
