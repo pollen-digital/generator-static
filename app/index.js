@@ -1,5 +1,4 @@
-var fs = require('fs'),
-    path = require('path'),
+var path = require('path'),
     util = require('util'),
     yeoman = require('yeoman-generator');
 
