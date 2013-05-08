@@ -75,9 +75,9 @@ A good way to debug the code as you develop the site is as follows:
 - open one terminal window and use `nave` to select your Node.js installation
 - navigate into your project's root directory and run `grunt && grunt watch`
 - open a second terminal window and (again) use `nave` to select your Node.js installation
-- navigate into `<PROJECT_ROOT>/dist/` and run `http-server -c-1`
+- navigate into `<PROJECT_ROOT>/dist/app/` and run `http-server -c-1`
 - you should now have a live development server running at
-`http://localhost:8080` which serves up the site
+`http://localhost:8080/views` which serves up the site
 
 ## More info
 
