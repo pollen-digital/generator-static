@@ -1,6 +1,6 @@
 # Yeoman Static scaffold
 
-A client-side project workflow template.
+Yeoman Generator for a basic front-end project workflow.
 
 ## Instructions
 ### 1. Install Node.js
