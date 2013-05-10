@@ -73,7 +73,7 @@ or
 A good way to debug the code as you develop the site is as follows:
 
 - open one terminal window and use `nave` to select your Node.js installation
-- navigate into your project's root directory and run `grunt && grunt watch`
+- navigate into your project's root directory and run `grunt default watch`
 - open a second terminal window and (again) use `nave` to select your Node.js installation
 - navigate into `<PROJECT_ROOT>/dist/app/` and run `http-server -c-1`
 - you should now have a live development server running at
