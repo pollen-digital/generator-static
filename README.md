@@ -2,6 +2,8 @@
 
 Yeoman Generator for a basic front-end project workflow.
 
+If you like the combination of Jade + LESS + CoffeeScript, you might like this!
+
 ## Instructions
 ### 1. Install Node.js
 
