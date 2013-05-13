@@ -4,6 +4,7 @@
 .sass-cache
 node_modules
 components
+temp
 build
 dist
 
