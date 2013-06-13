@@ -186,6 +186,9 @@ module.exports = (grunt) ->
           }
         ]
 
+    clean:
+      all: ['<%= paths.temp %>', '<%= paths.dist %>']
+
     watch:
       images:
         files: '<%= paths.images %>**/*.{png,gif,jpg,jpeg}'
@@ -200,6 +203,7 @@ module.exports = (grunt) ->
         files: '<%= paths.scripts %>**/*.{js,coffee,coffee.md,litcoffee}'
         tasks: ['scripts', 'jade']
 
+  grunt.loadNpmTasks 'grunt-contrib-clean'
   grunt.loadNpmTasks 'grunt-contrib-coffee'
   grunt.loadNpmTasks 'grunt-contrib-copy'
   grunt.loadNpmTasks 'grunt-contrib-cssmin'
@@ -214,6 +218,6 @@ module.exports = (grunt) ->
   grunt.registerTask 'scripts', ['coffee', 'copy:js', 'uglify:build',
     'uglify:dist']
   grunt.registerTask 'images', ['imagemin', 'copy:images']
-  grunt.registerTask 'default', ['images', 'copy:fonts', 'stylesheets',
+  grunt.registerTask 'default', ['clean:all', 'images', 'copy:fonts', 'stylesheets',
     'scripts', 'jade']
 
