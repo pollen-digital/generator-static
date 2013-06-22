@@ -19,7 +19,7 @@ This guides assumes you have installed the following tools successfully:
 - git
 - Homebrew
 
-Use nave (or similar) to manage you Node.js installations. You should always try
+Use nave (or similar) to manage your Node.js installations. You should always try
 to use the latest stable version of Node.js.
 
 In a terminal, run:
