@@ -33,4 +33,5 @@ Generator.prototype.app = function app() {
   this.directory('../skeleton', '.');
   this.template('_bower.json', 'bower.json');
   this.template('_package.json', 'package.json');
+  this.template('_README.md', 'README.md');
 };
