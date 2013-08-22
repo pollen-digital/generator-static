@@ -1,4 +1,6 @@
 *.py[cod]
+*~
+*.swp
 
 .DS_Store
 .sass-cache
