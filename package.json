@@ -1,6 +1,6 @@
 {
   "name": "generator-static",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Yeoman Generator for a basic front-end project workflow",
   "main": "app/index.js",
   "repository": {
