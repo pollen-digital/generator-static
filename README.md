@@ -222,7 +222,7 @@ In stylesheets, you simply reference assets using `$ASSET(<asset_path>)`.
 For example:
 
 	.mast {
-	  background: url($ASSET(images/texture.png)) repeat;
+	  background: url('$ASSET(images/texture.png)') repeat;
 	}
 
 There is a grunt task called `replace` that will look through the compiled
